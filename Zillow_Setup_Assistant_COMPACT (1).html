@@ -1,0 +1,2984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zillow Setup Assistant - Compact Names</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 14px; }
+        
+        .progress-section {
+            padding: 25px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar-container {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .progress-text { text-align: center; font-size: 16px; color: #333; font-weight: 600; }
+        
+        .filters {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group { display: flex; gap: 10px; align-items: center; }
+        .filter-group label { font-weight: 600; color: #333; font-size: 14px; }
+        
+        select, button {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        select { background: white; }
+        select:focus { outline: none; border-color: #667eea; }
+        
+        .card { padding: 30px; }
+        
+        .group-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .group-header.seller { background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%); }
+        .group-header.buyer { background: linear-gradient(135deg, #4472C4 0%, #5B9BD5 100%); }
+        
+        .group-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        
+        .group-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+        
+        .meta-item { display: flex; align-items: center; gap: 5px; }
+        
+        .copy-section { margin-bottom: 25px; }
+        .copy-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: block;
+        }
+        
+        .copy-box { display: flex; gap: 10px; align-items: stretch; }
+        
+        .copy-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            background: #f8f9fa;
+            color: #333;
+            resize: none;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .copy-btn.copied { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        
+        .action-buttons { display: flex; gap: 15px; margin-top: 30px; }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-complete { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
+        .btn-complete:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4); }
+        .btn-skip { background: #f8f9fa; color: #666; border: 2px solid #e0e0e0; }
+        .btn-skip:hover { background: #e9ecef; }
+        .btn-next { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        
+        .completion-message { text-align: center; padding: 60px 30px; }
+        .completion-message h2 { font-size: 36px; color: #11998e; margin-bottom: 15px; }
+        .completion-message p { font-size: 18px; color: #666; margin-bottom: 25px; }
+        
+        .btn-reset {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-reset:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+        
+        .instructions h3 { color: #856404; margin-bottom: 10px; font-size: 16px; }
+        .instructions ol { margin-left: 20px; color: #856404; }
+        .instructions li { margin: 5px 0; font-size: 14px; }
+        
+        .warning-box {
+            background: #ffe5e5;
+            border-left: 4px solid #ff0000;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+        
+        .warning-box h3 { color: #cc0000; margin-bottom: 10px; font-size: 16px; }
+        .warning-box p { color: #cc0000; font-size: 14px; }
+        
+        @media (max-width: 768px) {
+            .action-buttons { flex-direction: column; }
+            .filters { flex-direction: column; align-items: stretch; }
+            .filter-group { flex-direction: column; align-items: stretch; }
+            select, button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Zillow ZIP Group Setup - ULTRA COMPACT</h1>
+            <p>Fits Zillow's 14-character limit • 159 groups total</p>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">
+                    <span id="progressPercent">0%</span>
+                </div>
+            </div>
+            <div class="progress-text">
+                <span id="progressText">0 of 159 groups completed</span>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label for="leadTypeFilter">Lead Type:</label>
+                <select id="leadTypeFilter">
+                    <option value="ALL">All (SELLER + BUYER)</option>
+                    <option value="SELLER">SELLER Only</option>
+                    <option value="BUYER">BUYER Only</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="tierFilter">Tier:</label>
+                <select id="tierFilter">
+                    <option value="ALL">All Tiers</option>
+                    <option value="T1">T1 Only ($0-$400K)</option>
+                    <option value="T2">T2 Only ($400K-$1M)</option>
+                    <option value="T3">T3 Only ($400K-$5M)</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="showCompleted">Show:</label>
+                <select id="showCompleted">
+                    <option value="pending">Pending Only</option>
+                    <option value="all">All Groups</option>
+                    <option value="completed">Completed Only</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="card" id="cardContainer">
+            <div class="warning-box">
+                <h3>⚠️ ULTRA-COMPACT NAMING (14 Character Limit)</h3>
+                <p>All group names are now under 14 characters to fit Zillow's requirement. Format: <strong>S6-BS-A-T1</strong> (SELLER, Zone 6, Broward South, Sub-zone A, Tier 1)</p>
+            </div>
+            
+            <div class="instructions">
+                <h3>📋 Quick Setup Instructions:</h3>
+                <ol>
+                    <li>Open Zillow Premier Agent: <strong>premieragent.zillow.com/leads/routing/settings</strong></li>
+                    <li>Click <strong>"Create ZIP group"</strong></li>
+                    <li>Copy compact name below → Paste into "ZIP group name"</li>
+                    <li>Copy ZIP codes → Paste into "Enter ZIP"</li>
+                    <li>Click <strong>"Save"</strong> in Zillow</li>
+                    <li>Click <strong>"Mark Complete"</strong> below</li>
+                </ol>
+            </div>
+            
+            <div id="groupCard"></div>
+        </div>
+    </div>
+
+    <script>
+        const allGroups = [
+  {
+    "id": 1,
+    "compactName": "S1-MC-A-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33180, 33158, 33172, 33009, 33101, 33125, 33126, 33127, 33128, 33129",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Aventura, Hallandale Beach, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 2,
+    "compactName": "S1-MC-A-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33180, 33158, 33172, 33009, 33101, 33125, 33126, 33127, 33128, 33129",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Aventura, Hallandale Beach, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 3,
+    "compactName": "S1-MC-A-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33180, 33158, 33172, 33009, 33101, 33125, 33126, 33127, 33128, 33129",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Aventura, Hallandale Beach, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 4,
+    "compactName": "S1-MC-B-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33130, 33131, 33132, 33133, 33134, 33135, 33136, 33137, 33138, 33139",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 5,
+    "compactName": "S1-MC-B-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33130, 33131, 33132, 33133, 33134, 33135, 33136, 33137, 33138, 33139",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 6,
+    "compactName": "S1-MC-B-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33130, 33131, 33132, 33133, 33134, 33135, 33136, 33137, 33138, 33139",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 7,
+    "compactName": "S1-MC-C-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "C",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33140, 33141, 33142, 33145, 33149, 33156, 33157, 33173, 33177, 33186",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 8,
+    "compactName": "S1-MC-C-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "C",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33140, 33141, 33142, 33145, 33149, 33156, 33157, 33173, 33177, 33186",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 9,
+    "compactName": "S1-MC-C-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "C",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33140, 33141, 33142, 33145, 33149, 33156, 33157, 33173, 33177, 33186",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 10,
+    "compactName": "S1-MC-D-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "D",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33242, 33109, 33140, 33141, 33023, 33055, 33056, 33160",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Miami, Miami Beach, Miami Gardens, Miramar, North Miami Beach, Opa-locka",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 11,
+    "compactName": "S1-MC-D-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "D",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33242, 33109, 33140, 33141, 33023, 33055, 33056, 33160",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Miami, Miami Beach, Miami Gardens, Miramar, North Miami Beach, Opa-locka",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 12,
+    "compactName": "S1-MC-D-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "D",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33242, 33109, 33140, 33141, 33023, 33055, 33056, 33160",
+    "leadType": "SELLER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Miami, Miami Beach, Miami Gardens, Miramar, North Miami Beach, Opa-locka",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 13,
+    "compactName": "S10-LE-A-T1",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33904, 33909, 33914, 33955, 33990, 33991, 33993, 33907, 33908, 33912",
+    "leadType": "SELLER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Cape Coral, Fort Myers, Punta Gorda",
+    "counties": "Charlotte, Lee"
+  },
+  {
+    "id": 14,
+    "compactName": "S10-LE-A-T2",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33904, 33909, 33914, 33955, 33990, 33991, 33993, 33907, 33908, 33912",
+    "leadType": "SELLER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Cape Coral, Fort Myers, Punta Gorda",
+    "counties": "Charlotte, Lee"
+  },
+  {
+    "id": 15,
+    "compactName": "S10-LE-A-T3",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33904, 33909, 33914, 33955, 33990, 33991, 33993, 33907, 33908, 33912",
+    "leadType": "SELLER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Cape Coral, Fort Myers, Punta Gorda",
+    "counties": "Charlotte, Lee"
+  },
+  {
+    "id": 16,
+    "compactName": "S10-LE-B-T1",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33913, 33916, 33919, 33973, 33976, 33903",
+    "leadType": "SELLER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Fort Myers, Lehigh Acres, North Fort Myers",
+    "counties": "Lee"
+  },
+  {
+    "id": 17,
+    "compactName": "S10-LE-B-T2",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33913, 33916, 33919, 33973, 33976, 33903",
+    "leadType": "SELLER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Fort Myers, Lehigh Acres, North Fort Myers",
+    "counties": "Lee"
+  },
+  {
+    "id": 18,
+    "compactName": "S10-LE-B-T3",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33913, 33916, 33919, 33973, 33976, 33903",
+    "leadType": "SELLER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Fort Myers, Lehigh Acres, North Fort Myers",
+    "counties": "Lee"
+  },
+  {
+    "id": 19,
+    "compactName": "S11-CH-A-T1",
+    "fullZoneName": "Zone 11 - CHARLOTTE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34266, 33948, 33950, 33952, 33980",
+    "leadType": "SELLER",
+    "zoneNumber": "11",
+    "zoneName": "CHARLOTTE",
+    "zoneCode": "CH",
+    "cities": "Arcadia, Port Charlotte, Punta Gorda",
+    "counties": "Charlotte, DeSoto"
+  },
+  {
+    "id": 20,
+    "compactName": "S11-CH-A-T2",
+    "fullZoneName": "Zone 11 - CHARLOTTE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34266, 33948, 33950, 33952, 33980",
+    "leadType": "SELLER",
+    "zoneNumber": "11",
+    "zoneName": "CHARLOTTE",
+    "zoneCode": "CH",
+    "cities": "Arcadia, Port Charlotte, Punta Gorda",
+    "counties": "Charlotte, DeSoto"
+  },
+  {
+    "id": 21,
+    "compactName": "S11-CH-A-T3",
+    "fullZoneName": "Zone 11 - CHARLOTTE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34266, 33948, 33950, 33952, 33980",
+    "leadType": "SELLER",
+    "zoneNumber": "11",
+    "zoneName": "CHARLOTTE",
+    "zoneCode": "CH",
+    "cities": "Arcadia, Port Charlotte, Punta Gorda",
+    "counties": "Charlotte, DeSoto"
+  },
+  {
+    "id": 22,
+    "compactName": "S12-SR-A-T1",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34216, 34201, 34202, 34203, 34211, 34212, 34215, 34217, 34228, 34275",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Bradenton, Nokomis",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 23,
+    "compactName": "S12-SR-A-T2",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34216, 34201, 34202, 34203, 34211, 34212, 34215, 34217, 34228, 34275",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Bradenton, Nokomis",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 24,
+    "compactName": "S12-SR-A-T3",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34216, 34201, 34202, 34203, 34211, 34212, 34215, 34217, 34228, 34275",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Bradenton, Nokomis",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 25,
+    "compactName": "S12-SR-B-T1",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34231, 34232, 34233, 34234, 34236, 34237, 34238, 34239, 34240, 34241",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 26,
+    "compactName": "S12-SR-B-T2",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34231, 34232, 34233, 34234, 34236, 34237, 34238, 34239, 34240, 34241",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 27,
+    "compactName": "S12-SR-B-T3",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34231, 34232, 34233, 34234, 34236, 34237, 34238, 34239, 34240, 34241",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 28,
+    "compactName": "S12-SR-C-T1",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "C",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34243, 34242",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 29,
+    "compactName": "S12-SR-C-T2",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "C",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34243, 34242",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 30,
+    "compactName": "S12-SR-C-T3",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "C",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34243, 34242",
+    "leadType": "SELLER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 31,
+    "compactName": "S13-SP-A-T1",
+    "fullZoneName": "Zone 13 - SPACE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "32952, 32953",
+    "leadType": "SELLER",
+    "zoneNumber": "13",
+    "zoneName": "SPACE",
+    "zoneCode": "SP",
+    "cities": "Merritt Island",
+    "counties": "Brevard"
+  },
+  {
+    "id": 32,
+    "compactName": "S13-SP-A-T2",
+    "fullZoneName": "Zone 13 - SPACE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "32952, 32953",
+    "leadType": "SELLER",
+    "zoneNumber": "13",
+    "zoneName": "SPACE",
+    "zoneCode": "SP",
+    "cities": "Merritt Island",
+    "counties": "Brevard"
+  },
+  {
+    "id": 33,
+    "compactName": "S13-SP-A-T3",
+    "fullZoneName": "Zone 13 - SPACE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "32952, 32953",
+    "leadType": "SELLER",
+    "zoneNumber": "13",
+    "zoneName": "SPACE",
+    "zoneCode": "SP",
+    "cities": "Merritt Island",
+    "counties": "Brevard"
+  },
+  {
+    "id": 34,
+    "compactName": "S14-TA-A-T1",
+    "fullZoneName": "Zone 14 - TAMPA",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33708",
+    "leadType": "SELLER",
+    "zoneNumber": "14",
+    "zoneName": "TAMPA",
+    "zoneCode": "TA",
+    "cities": "St. Petersburg",
+    "counties": "Pinellas"
+  },
+  {
+    "id": 35,
+    "compactName": "S14-TA-A-T2",
+    "fullZoneName": "Zone 14 - TAMPA",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33708",
+    "leadType": "SELLER",
+    "zoneNumber": "14",
+    "zoneName": "TAMPA",
+    "zoneCode": "TA",
+    "cities": "St. Petersburg",
+    "counties": "Pinellas"
+  },
+  {
+    "id": 36,
+    "compactName": "S14-TA-A-T3",
+    "fullZoneName": "Zone 14 - TAMPA",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33708",
+    "leadType": "SELLER",
+    "zoneNumber": "14",
+    "zoneName": "TAMPA",
+    "zoneCode": "TA",
+    "cities": "St. Petersburg",
+    "counties": "Pinellas"
+  },
+  {
+    "id": 37,
+    "compactName": "S15-UN-A-T1",
+    "fullZoneName": "Zone 15 - UNASSIGNED",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33194",
+    "leadType": "SELLER",
+    "zoneNumber": "15",
+    "zoneName": "UNASSIGNED",
+    "zoneCode": "UN",
+    "cities": "Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 38,
+    "compactName": "S15-UN-A-T2",
+    "fullZoneName": "Zone 15 - UNASSIGNED",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33194",
+    "leadType": "SELLER",
+    "zoneNumber": "15",
+    "zoneName": "UNASSIGNED",
+    "zoneCode": "UN",
+    "cities": "Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 39,
+    "compactName": "S15-UN-A-T3",
+    "fullZoneName": "Zone 15 - UNASSIGNED",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33194",
+    "leadType": "SELLER",
+    "zoneNumber": "15",
+    "zoneName": "UNASSIGNED",
+    "zoneCode": "UN",
+    "cities": "Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 40,
+    "compactName": "S2-MS-A-T1",
+    "fullZoneName": "Zone 2 - MIA-SOUTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33032, 33033, 33035",
+    "leadType": "SELLER",
+    "zoneNumber": "2",
+    "zoneName": "MIA-SOUTH",
+    "zoneCode": "MS",
+    "cities": "Homestead",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 41,
+    "compactName": "S2-MS-A-T2",
+    "fullZoneName": "Zone 2 - MIA-SOUTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33032, 33033, 33035",
+    "leadType": "SELLER",
+    "zoneNumber": "2",
+    "zoneName": "MIA-SOUTH",
+    "zoneCode": "MS",
+    "cities": "Homestead",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 42,
+    "compactName": "S2-MS-A-T3",
+    "fullZoneName": "Zone 2 - MIA-SOUTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33032, 33033, 33035",
+    "leadType": "SELLER",
+    "zoneNumber": "2",
+    "zoneName": "MIA-SOUTH",
+    "zoneCode": "MS",
+    "cities": "Homestead",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 43,
+    "compactName": "S3-KY-A-T1",
+    "fullZoneName": "Zone 3 - KEYS",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33043, 33036, 33070, 33051, 33037, 33040, 33001, 33050, 33042",
+    "leadType": "SELLER",
+    "zoneNumber": "3",
+    "zoneName": "KEYS",
+    "zoneCode": "KY",
+    "cities": "Big Pine Key, Islamorada, Key Colony Beach, Key Largo, Key West, Marathon, Summerland Key, Tavernier",
+    "counties": "Monroe"
+  },
+  {
+    "id": 44,
+    "compactName": "S3-KY-A-T2",
+    "fullZoneName": "Zone 3 - KEYS",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33043, 33036, 33070, 33051, 33037, 33040, 33001, 33050, 33042",
+    "leadType": "SELLER",
+    "zoneNumber": "3",
+    "zoneName": "KEYS",
+    "zoneCode": "KY",
+    "cities": "Big Pine Key, Islamorada, Key Colony Beach, Key Largo, Key West, Marathon, Summerland Key, Tavernier",
+    "counties": "Monroe"
+  },
+  {
+    "id": 45,
+    "compactName": "S3-KY-A-T3",
+    "fullZoneName": "Zone 3 - KEYS",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33043, 33036, 33070, 33051, 33037, 33040, 33001, 33050, 33042",
+    "leadType": "SELLER",
+    "zoneNumber": "3",
+    "zoneName": "KEYS",
+    "zoneCode": "KY",
+    "cities": "Big Pine Key, Islamorada, Key Colony Beach, Key Largo, Key West, Marathon, Summerland Key, Tavernier",
+    "counties": "Monroe"
+  },
+  {
+    "id": 46,
+    "compactName": "S4-BN-A-T1",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33066, 33073, 33065, 33067, 33071, 33441, 33442, 33063, 33068, 33060",
+    "leadType": "SELLER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Coconut Creek, Coral Springs, Deerfield Beach, Margate, Parkland, Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 47,
+    "compactName": "S4-BN-A-T2",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33066, 33073, 33065, 33067, 33071, 33441, 33442, 33063, 33068, 33060",
+    "leadType": "SELLER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Coconut Creek, Coral Springs, Deerfield Beach, Margate, Parkland, Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 48,
+    "compactName": "S4-BN-A-T3",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33066, 33073, 33065, 33067, 33071, 33441, 33442, 33063, 33068, 33060",
+    "leadType": "SELLER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Coconut Creek, Coral Springs, Deerfield Beach, Margate, Parkland, Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 49,
+    "compactName": "S4-BN-B-T1",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33062, 33064, 33069",
+    "leadType": "SELLER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 50,
+    "compactName": "S4-BN-B-T2",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33062, 33064, 33069",
+    "leadType": "SELLER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 51,
+    "compactName": "S4-BN-B-T3",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33062, 33064, 33069",
+    "leadType": "SELLER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 52,
+    "compactName": "S5-BC-A-T1",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33301, 33304, 33305, 33306, 33308, 33309, 33311, 33312, 33315, 33316",
+    "leadType": "SELLER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale",
+    "counties": "Broward"
+  },
+  {
+    "id": 53,
+    "compactName": "S5-BC-A-T2",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33301, 33304, 33305, 33306, 33308, 33309, 33311, 33312, 33315, 33316",
+    "leadType": "SELLER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale",
+    "counties": "Broward"
+  },
+  {
+    "id": 54,
+    "compactName": "S5-BC-A-T3",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33301, 33304, 33305, 33306, 33308, 33309, 33311, 33312, 33315, 33316",
+    "leadType": "SELLER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale",
+    "counties": "Broward"
+  },
+  {
+    "id": 55,
+    "compactName": "S5-BC-B-T1",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33334, 33319, 33326",
+    "leadType": "SELLER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale, Tamarac, Weston",
+    "counties": "Broward"
+  },
+  {
+    "id": 56,
+    "compactName": "S5-BC-B-T2",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33334, 33319, 33326",
+    "leadType": "SELLER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale, Tamarac, Weston",
+    "counties": "Broward"
+  },
+  {
+    "id": 57,
+    "compactName": "S5-BC-B-T3",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33334, 33319, 33326",
+    "leadType": "SELLER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale, Tamarac, Weston",
+    "counties": "Broward"
+  },
+  {
+    "id": 58,
+    "compactName": "S6-BS-A-T1",
+    "fullZoneName": "Zone 6 - BRW-SOUTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33317, 33324, 33328, 33330, 33023",
+    "leadType": "SELLER",
+    "zoneNumber": "6",
+    "zoneName": "BRW-SOUTH",
+    "zoneCode": "BS",
+    "cities": "Davie, Fort Lauderdale, Miramar, Plantation",
+    "counties": "Broward, Miami-Dade"
+  },
+  {
+    "id": 59,
+    "compactName": "S6-BS-A-T2",
+    "fullZoneName": "Zone 6 - BRW-SOUTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33317, 33324, 33328, 33330, 33023",
+    "leadType": "SELLER",
+    "zoneNumber": "6",
+    "zoneName": "BRW-SOUTH",
+    "zoneCode": "BS",
+    "cities": "Davie, Fort Lauderdale, Miramar, Plantation",
+    "counties": "Broward, Miami-Dade"
+  },
+  {
+    "id": 60,
+    "compactName": "S6-BS-A-T3",
+    "fullZoneName": "Zone 6 - BRW-SOUTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33317, 33324, 33328, 33330, 33023",
+    "leadType": "SELLER",
+    "zoneNumber": "6",
+    "zoneName": "BRW-SOUTH",
+    "zoneCode": "BS",
+    "cities": "Davie, Fort Lauderdale, Miramar, Plantation",
+    "counties": "Broward, Miami-Dade"
+  },
+  {
+    "id": 61,
+    "compactName": "S7-PS-A-T1",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33076, 33428, 33431, 33432, 33433, 33486, 33487, 33496, 33498, 33426",
+    "leadType": "SELLER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boca Raton, Boynton Beach, Coconut Creek",
+    "counties": "Broward, Palm Beach"
+  },
+  {
+    "id": 62,
+    "compactName": "S7-PS-A-T2",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33076, 33428, 33431, 33432, 33433, 33486, 33487, 33496, 33498, 33426",
+    "leadType": "SELLER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boca Raton, Boynton Beach, Coconut Creek",
+    "counties": "Broward, Palm Beach"
+  },
+  {
+    "id": 63,
+    "compactName": "S7-PS-A-T3",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33076, 33428, 33431, 33432, 33433, 33486, 33487, 33496, 33498, 33426",
+    "leadType": "SELLER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boca Raton, Boynton Beach, Coconut Creek",
+    "counties": "Broward, Palm Beach"
+  },
+  {
+    "id": 64,
+    "compactName": "S7-PS-B-T1",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33435, 33472, 33473, 33444, 33445, 33483",
+    "leadType": "SELLER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boynton Beach, Delray Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 65,
+    "compactName": "S7-PS-B-T2",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33435, 33472, 33473, 33444, 33445, 33483",
+    "leadType": "SELLER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boynton Beach, Delray Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 66,
+    "compactName": "S7-PS-B-T3",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33435, 33472, 33473, 33444, 33445, 33483",
+    "leadType": "SELLER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boynton Beach, Delray Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 67,
+    "compactName": "S8-PC-A-T1",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33455, 34957, 33458, 33469, 33477, 33449, 33460, 33461, 33462, 33463",
+    "leadType": "SELLER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Boynton Beach, Hobe Sound, Jensen Beach, Jupiter, Lake Worth",
+    "counties": "Martin, Palm Beach"
+  },
+  {
+    "id": 68,
+    "compactName": "S8-PC-A-T2",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33455, 34957, 33458, 33469, 33477, 33449, 33460, 33461, 33462, 33463",
+    "leadType": "SELLER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Boynton Beach, Hobe Sound, Jensen Beach, Jupiter, Lake Worth",
+    "counties": "Martin, Palm Beach"
+  },
+  {
+    "id": 69,
+    "compactName": "S8-PC-A-T3",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33455, 34957, 33458, 33469, 33477, 33449, 33460, 33461, 33462, 33463",
+    "leadType": "SELLER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Boynton Beach, Hobe Sound, Jensen Beach, Jupiter, Lake Worth",
+    "counties": "Martin, Palm Beach"
+  },
+  {
+    "id": 70,
+    "compactName": "S8-PC-B-T1",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33467, 33408, 33403, 33410, 33418, 33480, 33404",
+    "leadType": "SELLER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Lake Worth, Palm Beach, West Palm Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 71,
+    "compactName": "S8-PC-B-T2",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33467, 33408, 33403, 33410, 33418, 33480, 33404",
+    "leadType": "SELLER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Lake Worth, Palm Beach, West Palm Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 72,
+    "compactName": "S8-PC-B-T3",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33467, 33408, 33403, 33410, 33418, 33480, 33404",
+    "leadType": "SELLER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Lake Worth, Palm Beach, West Palm Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 73,
+    "compactName": "S9-TR-A-T1",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34945, 34946, 34947, 34950, 34951, 34981, 34982, 34956, 34952, 34983",
+    "leadType": "SELLER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie",
+    "counties": "St. Lucie"
+  },
+  {
+    "id": 74,
+    "compactName": "S9-TR-A-T2",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34945, 34946, 34947, 34950, 34951, 34981, 34982, 34956, 34952, 34983",
+    "leadType": "SELLER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie",
+    "counties": "St. Lucie"
+  },
+  {
+    "id": 75,
+    "compactName": "S9-TR-A-T3",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34945, 34946, 34947, 34950, 34951, 34981, 34982, 34956, 34952, 34983",
+    "leadType": "SELLER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie",
+    "counties": "St. Lucie"
+  },
+  {
+    "id": 76,
+    "compactName": "S9-TR-B-T1",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34984, 34986, 34987, 34949, 34994, 34995, 34996",
+    "leadType": "SELLER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie, Stuart",
+    "counties": "Martin, St. Lucie"
+  },
+  {
+    "id": 77,
+    "compactName": "S9-TR-B-T2",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34984, 34986, 34987, 34949, 34994, 34995, 34996",
+    "leadType": "SELLER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie, Stuart",
+    "counties": "Martin, St. Lucie"
+  },
+  {
+    "id": 78,
+    "compactName": "S9-TR-B-T3",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34984, 34986, 34987, 34949, 34994, 34995, 34996",
+    "leadType": "SELLER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie, Stuart",
+    "counties": "Martin, St. Lucie"
+  },
+  {
+    "id": 79,
+    "compactName": "B1-MC-A-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33180, 33158, 33172, 33009, 33021, 33101, 33125, 33126, 33127, 33128",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Aventura, Hallandale Beach, Hollywood, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 80,
+    "compactName": "B1-MC-A-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33180, 33158, 33172, 33009, 33021, 33101, 33125, 33126, 33127, 33128",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Aventura, Hallandale Beach, Hollywood, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 81,
+    "compactName": "B1-MC-A-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33180, 33158, 33172, 33009, 33021, 33101, 33125, 33126, 33127, 33128",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Aventura, Hallandale Beach, Hollywood, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 82,
+    "compactName": "B1-MC-B-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33129, 33130, 33131, 33132, 33133, 33134, 33135, 33136, 33137, 33138",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 83,
+    "compactName": "B1-MC-B-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33129, 33130, 33131, 33132, 33133, 33134, 33135, 33136, 33137, 33138",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 84,
+    "compactName": "B1-MC-B-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33129, 33130, 33131, 33132, 33133, 33134, 33135, 33136, 33137, 33138",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 85,
+    "compactName": "B1-MC-C-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "C",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33142, 33145, 33149, 33156, 33157, 33173, 33177, 33186, 33242, 33109",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 86,
+    "compactName": "B1-MC-C-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "C",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33142, 33145, 33149, 33156, 33157, 33173, 33177, 33186, 33242, 33109",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 87,
+    "compactName": "B1-MC-C-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "C",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33142, 33145, 33149, 33156, 33157, 33173, 33177, 33186, 33242, 33109",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Coral Gables, Miami, Miami Beach",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 88,
+    "compactName": "B1-MC-D-T1",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "D",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33139, 33140, 33141, 33055, 33056, 33160, 33161, 33154, 33196",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Bal Harbour, Miami, Miami Beach, Miami Gardens, North Miami Beach, Opa-locka",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 89,
+    "compactName": "B1-MC-D-T2",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "D",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33139, 33140, 33141, 33055, 33056, 33160, 33161, 33154, 33196",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Bal Harbour, Miami, Miami Beach, Miami Gardens, North Miami Beach, Opa-locka",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 90,
+    "compactName": "B1-MC-D-T3",
+    "fullZoneName": "Zone 1 - MIA-CORE",
+    "subZone": "D",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33139, 33140, 33141, 33055, 33056, 33160, 33161, 33154, 33196",
+    "leadType": "BUYER",
+    "zoneNumber": "1",
+    "zoneName": "MIA-CORE",
+    "zoneCode": "MC",
+    "cities": "Bal Harbour, Miami, Miami Beach, Miami Gardens, North Miami Beach, Opa-locka",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 91,
+    "compactName": "B10-LE-A-T1",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33904, 33909, 33910, 33914, 33915, 33955, 33990, 33991, 33993, 33907",
+    "leadType": "BUYER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Cape Coral, Fort Myers, Punta Gorda",
+    "counties": "Charlotte, Lee"
+  },
+  {
+    "id": 92,
+    "compactName": "B10-LE-A-T2",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33904, 33909, 33910, 33914, 33915, 33955, 33990, 33991, 33993, 33907",
+    "leadType": "BUYER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Cape Coral, Fort Myers, Punta Gorda",
+    "counties": "Charlotte, Lee"
+  },
+  {
+    "id": 93,
+    "compactName": "B10-LE-A-T3",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33904, 33909, 33910, 33914, 33915, 33955, 33990, 33991, 33993, 33907",
+    "leadType": "BUYER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Cape Coral, Fort Myers, Punta Gorda",
+    "counties": "Charlotte, Lee"
+  },
+  {
+    "id": 94,
+    "compactName": "B10-LE-B-T1",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33908, 33912, 33913, 33916, 33919, 33973, 33976, 33903",
+    "leadType": "BUYER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Fort Myers, Lehigh Acres, North Fort Myers",
+    "counties": "Lee"
+  },
+  {
+    "id": 95,
+    "compactName": "B10-LE-B-T2",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33908, 33912, 33913, 33916, 33919, 33973, 33976, 33903",
+    "leadType": "BUYER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Fort Myers, Lehigh Acres, North Fort Myers",
+    "counties": "Lee"
+  },
+  {
+    "id": 96,
+    "compactName": "B10-LE-B-T3",
+    "fullZoneName": "Zone 10 - LEE",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33908, 33912, 33913, 33916, 33919, 33973, 33976, 33903",
+    "leadType": "BUYER",
+    "zoneNumber": "10",
+    "zoneName": "LEE",
+    "zoneCode": "LE",
+    "cities": "Fort Myers, Lehigh Acres, North Fort Myers",
+    "counties": "Lee"
+  },
+  {
+    "id": 97,
+    "compactName": "B11-CH-A-T1",
+    "fullZoneName": "Zone 11 - CHARLOTTE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34266, 33948, 33950, 33952, 33980",
+    "leadType": "BUYER",
+    "zoneNumber": "11",
+    "zoneName": "CHARLOTTE",
+    "zoneCode": "CH",
+    "cities": "Arcadia, Port Charlotte, Punta Gorda",
+    "counties": "Charlotte, DeSoto"
+  },
+  {
+    "id": 98,
+    "compactName": "B11-CH-A-T2",
+    "fullZoneName": "Zone 11 - CHARLOTTE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34266, 33948, 33950, 33952, 33980",
+    "leadType": "BUYER",
+    "zoneNumber": "11",
+    "zoneName": "CHARLOTTE",
+    "zoneCode": "CH",
+    "cities": "Arcadia, Port Charlotte, Punta Gorda",
+    "counties": "Charlotte, DeSoto"
+  },
+  {
+    "id": 99,
+    "compactName": "B11-CH-A-T3",
+    "fullZoneName": "Zone 11 - CHARLOTTE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34266, 33948, 33950, 33952, 33980",
+    "leadType": "BUYER",
+    "zoneNumber": "11",
+    "zoneName": "CHARLOTTE",
+    "zoneCode": "CH",
+    "cities": "Arcadia, Port Charlotte, Punta Gorda",
+    "counties": "Charlotte, DeSoto"
+  },
+  {
+    "id": 100,
+    "compactName": "B12-SR-A-T1",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34216, 34201, 34202, 34203, 34211, 34212, 34215, 34217, 34228, 34275",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Bradenton, Nokomis",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 101,
+    "compactName": "B12-SR-A-T2",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34216, 34201, 34202, 34203, 34211, 34212, 34215, 34217, 34228, 34275",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Bradenton, Nokomis",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 102,
+    "compactName": "B12-SR-A-T3",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34216, 34201, 34202, 34203, 34211, 34212, 34215, 34217, 34228, 34275",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Bradenton, Nokomis",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 103,
+    "compactName": "B12-SR-B-T1",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34231, 34232, 34233, 34234, 34236, 34237, 34238, 34239, 34240, 34241",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 104,
+    "compactName": "B12-SR-B-T2",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34231, 34232, 34233, 34234, 34236, 34237, 34238, 34239, 34240, 34241",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 105,
+    "compactName": "B12-SR-B-T3",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34231, 34232, 34233, 34234, 34236, 34237, 34238, 34239, 34240, 34241",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Sarasota",
+    "counties": "Sarasota"
+  },
+  {
+    "id": 106,
+    "compactName": "B12-SR-C-T1",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "C",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34243, 34278, 34242, 34285, 34292, 34293",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Parrish, Sarasota, Venice",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 107,
+    "compactName": "B12-SR-C-T2",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "C",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34243, 34278, 34242, 34285, 34292, 34293",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Parrish, Sarasota, Venice",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 108,
+    "compactName": "B12-SR-C-T3",
+    "fullZoneName": "Zone 12 - SRQ-BRD",
+    "subZone": "C",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34243, 34278, 34242, 34285, 34292, 34293",
+    "leadType": "BUYER",
+    "zoneNumber": "12",
+    "zoneName": "SRQ-BRD",
+    "zoneCode": "SR",
+    "cities": "Parrish, Sarasota, Venice",
+    "counties": "Manatee, Sarasota"
+  },
+  {
+    "id": 109,
+    "compactName": "B13-SP-A-T1",
+    "fullZoneName": "Zone 13 - SPACE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "32952, 32953",
+    "leadType": "BUYER",
+    "zoneNumber": "13",
+    "zoneName": "SPACE",
+    "zoneCode": "SP",
+    "cities": "Merritt Island",
+    "counties": "Brevard"
+  },
+  {
+    "id": 110,
+    "compactName": "B13-SP-A-T2",
+    "fullZoneName": "Zone 13 - SPACE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "32952, 32953",
+    "leadType": "BUYER",
+    "zoneNumber": "13",
+    "zoneName": "SPACE",
+    "zoneCode": "SP",
+    "cities": "Merritt Island",
+    "counties": "Brevard"
+  },
+  {
+    "id": 111,
+    "compactName": "B13-SP-A-T3",
+    "fullZoneName": "Zone 13 - SPACE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "32952, 32953",
+    "leadType": "BUYER",
+    "zoneNumber": "13",
+    "zoneName": "SPACE",
+    "zoneCode": "SP",
+    "cities": "Merritt Island",
+    "counties": "Brevard"
+  },
+  {
+    "id": 112,
+    "compactName": "B14-TA-A-T1",
+    "fullZoneName": "Zone 14 - TAMPA",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33708",
+    "leadType": "BUYER",
+    "zoneNumber": "14",
+    "zoneName": "TAMPA",
+    "zoneCode": "TA",
+    "cities": "St. Petersburg",
+    "counties": "Pinellas"
+  },
+  {
+    "id": 113,
+    "compactName": "B14-TA-A-T2",
+    "fullZoneName": "Zone 14 - TAMPA",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33708",
+    "leadType": "BUYER",
+    "zoneNumber": "14",
+    "zoneName": "TAMPA",
+    "zoneCode": "TA",
+    "cities": "St. Petersburg",
+    "counties": "Pinellas"
+  },
+  {
+    "id": 114,
+    "compactName": "B14-TA-A-T3",
+    "fullZoneName": "Zone 14 - TAMPA",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33708",
+    "leadType": "BUYER",
+    "zoneNumber": "14",
+    "zoneName": "TAMPA",
+    "zoneCode": "TA",
+    "cities": "St. Petersburg",
+    "counties": "Pinellas"
+  },
+  {
+    "id": 115,
+    "compactName": "B15-UN-A-T1",
+    "fullZoneName": "Zone 15 - UNASSIGNED",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33194",
+    "leadType": "BUYER",
+    "zoneNumber": "15",
+    "zoneName": "UNASSIGNED",
+    "zoneCode": "UN",
+    "cities": "Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 116,
+    "compactName": "B15-UN-A-T2",
+    "fullZoneName": "Zone 15 - UNASSIGNED",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33194",
+    "leadType": "BUYER",
+    "zoneNumber": "15",
+    "zoneName": "UNASSIGNED",
+    "zoneCode": "UN",
+    "cities": "Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 117,
+    "compactName": "B15-UN-A-T3",
+    "fullZoneName": "Zone 15 - UNASSIGNED",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33194",
+    "leadType": "BUYER",
+    "zoneNumber": "15",
+    "zoneName": "UNASSIGNED",
+    "zoneCode": "UN",
+    "cities": "Miami",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 118,
+    "compactName": "B2-MS-A-T1",
+    "fullZoneName": "Zone 2 - MIA-SOUTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33032, 33033, 33035",
+    "leadType": "BUYER",
+    "zoneNumber": "2",
+    "zoneName": "MIA-SOUTH",
+    "zoneCode": "MS",
+    "cities": "Homestead",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 119,
+    "compactName": "B2-MS-A-T2",
+    "fullZoneName": "Zone 2 - MIA-SOUTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33032, 33033, 33035",
+    "leadType": "BUYER",
+    "zoneNumber": "2",
+    "zoneName": "MIA-SOUTH",
+    "zoneCode": "MS",
+    "cities": "Homestead",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 120,
+    "compactName": "B2-MS-A-T3",
+    "fullZoneName": "Zone 2 - MIA-SOUTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33032, 33033, 33035",
+    "leadType": "BUYER",
+    "zoneNumber": "2",
+    "zoneName": "MIA-SOUTH",
+    "zoneCode": "MS",
+    "cities": "Homestead",
+    "counties": "Miami-Dade"
+  },
+  {
+    "id": 121,
+    "compactName": "B3-KY-A-T1",
+    "fullZoneName": "Zone 3 - KEYS",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33043, 33036, 33070, 33051, 33037, 33040, 33001, 33050, 33042",
+    "leadType": "BUYER",
+    "zoneNumber": "3",
+    "zoneName": "KEYS",
+    "zoneCode": "KY",
+    "cities": "Big Pine Key, Islamorada, Key Colony Beach, Key Largo, Key West, Marathon, Summerland Key, Tavernier",
+    "counties": "Monroe"
+  },
+  {
+    "id": 122,
+    "compactName": "B3-KY-A-T2",
+    "fullZoneName": "Zone 3 - KEYS",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33043, 33036, 33070, 33051, 33037, 33040, 33001, 33050, 33042",
+    "leadType": "BUYER",
+    "zoneNumber": "3",
+    "zoneName": "KEYS",
+    "zoneCode": "KY",
+    "cities": "Big Pine Key, Islamorada, Key Colony Beach, Key Largo, Key West, Marathon, Summerland Key, Tavernier",
+    "counties": "Monroe"
+  },
+  {
+    "id": 123,
+    "compactName": "B3-KY-A-T3",
+    "fullZoneName": "Zone 3 - KEYS",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33043, 33036, 33070, 33051, 33037, 33040, 33001, 33050, 33042",
+    "leadType": "BUYER",
+    "zoneNumber": "3",
+    "zoneName": "KEYS",
+    "zoneCode": "KY",
+    "cities": "Big Pine Key, Islamorada, Key Colony Beach, Key Largo, Key West, Marathon, Summerland Key, Tavernier",
+    "counties": "Monroe"
+  },
+  {
+    "id": 124,
+    "compactName": "B4-BN-A-T1",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33066, 33073, 33065, 33067, 33071, 33441, 33442, 33063, 33068, 33060",
+    "leadType": "BUYER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Coconut Creek, Coral Springs, Deerfield Beach, Margate, Parkland, Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 125,
+    "compactName": "B4-BN-A-T2",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33066, 33073, 33065, 33067, 33071, 33441, 33442, 33063, 33068, 33060",
+    "leadType": "BUYER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Coconut Creek, Coral Springs, Deerfield Beach, Margate, Parkland, Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 126,
+    "compactName": "B4-BN-A-T3",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33066, 33073, 33065, 33067, 33071, 33441, 33442, 33063, 33068, 33060",
+    "leadType": "BUYER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Coconut Creek, Coral Springs, Deerfield Beach, Margate, Parkland, Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 127,
+    "compactName": "B4-BN-B-T1",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33062, 33064, 33069",
+    "leadType": "BUYER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 128,
+    "compactName": "B4-BN-B-T2",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33062, 33064, 33069",
+    "leadType": "BUYER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 129,
+    "compactName": "B4-BN-B-T3",
+    "fullZoneName": "Zone 4 - BRW-NORTH",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33062, 33064, 33069",
+    "leadType": "BUYER",
+    "zoneNumber": "4",
+    "zoneName": "BRW-NORTH",
+    "zoneCode": "BN",
+    "cities": "Pompano Beach",
+    "counties": "Broward"
+  },
+  {
+    "id": 130,
+    "compactName": "B5-BC-A-T1",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33301, 33304, 33305, 33306, 33308, 33309, 33311, 33312, 33315, 33316",
+    "leadType": "BUYER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale",
+    "counties": "Broward"
+  },
+  {
+    "id": 131,
+    "compactName": "B5-BC-A-T2",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33301, 33304, 33305, 33306, 33308, 33309, 33311, 33312, 33315, 33316",
+    "leadType": "BUYER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale",
+    "counties": "Broward"
+  },
+  {
+    "id": 132,
+    "compactName": "B5-BC-A-T3",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33301, 33304, 33305, 33306, 33308, 33309, 33311, 33312, 33315, 33316",
+    "leadType": "BUYER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale",
+    "counties": "Broward"
+  },
+  {
+    "id": 133,
+    "compactName": "B5-BC-B-T1",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33334, 33319, 33313, 33322, 33326",
+    "leadType": "BUYER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale, Plantation, Tamarac, Weston",
+    "counties": "Broward"
+  },
+  {
+    "id": 134,
+    "compactName": "B5-BC-B-T2",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33334, 33319, 33313, 33322, 33326",
+    "leadType": "BUYER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale, Plantation, Tamarac, Weston",
+    "counties": "Broward"
+  },
+  {
+    "id": 135,
+    "compactName": "B5-BC-B-T3",
+    "fullZoneName": "Zone 5 - BRW-CENTRAL",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33334, 33319, 33313, 33322, 33326",
+    "leadType": "BUYER",
+    "zoneNumber": "5",
+    "zoneName": "BRW-CENTRAL",
+    "zoneCode": "BC",
+    "cities": "Fort Lauderdale, Plantation, Tamarac, Weston",
+    "counties": "Broward"
+  },
+  {
+    "id": 136,
+    "compactName": "B6-BS-A-T1",
+    "fullZoneName": "Zone 6 - BRW-SOUTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33004, 33317, 33324, 33328, 33330, 33023, 33024",
+    "leadType": "BUYER",
+    "zoneNumber": "6",
+    "zoneName": "BRW-SOUTH",
+    "zoneCode": "BS",
+    "cities": "Dania Beach, Davie, Fort Lauderdale, Hollywood, Miramar, Plantation",
+    "counties": "Broward, Miami-Dade"
+  },
+  {
+    "id": 137,
+    "compactName": "B6-BS-A-T2",
+    "fullZoneName": "Zone 6 - BRW-SOUTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33004, 33317, 33324, 33328, 33330, 33023, 33024",
+    "leadType": "BUYER",
+    "zoneNumber": "6",
+    "zoneName": "BRW-SOUTH",
+    "zoneCode": "BS",
+    "cities": "Dania Beach, Davie, Fort Lauderdale, Hollywood, Miramar, Plantation",
+    "counties": "Broward, Miami-Dade"
+  },
+  {
+    "id": 138,
+    "compactName": "B6-BS-A-T3",
+    "fullZoneName": "Zone 6 - BRW-SOUTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33004, 33317, 33324, 33328, 33330, 33023, 33024",
+    "leadType": "BUYER",
+    "zoneNumber": "6",
+    "zoneName": "BRW-SOUTH",
+    "zoneCode": "BS",
+    "cities": "Dania Beach, Davie, Fort Lauderdale, Hollywood, Miramar, Plantation",
+    "counties": "Broward, Miami-Dade"
+  },
+  {
+    "id": 139,
+    "compactName": "B7-PS-A-T1",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33076, 33428, 33431, 33432, 33433, 33486, 33487, 33496, 33498, 33426",
+    "leadType": "BUYER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boca Raton, Boynton Beach, Coconut Creek",
+    "counties": "Broward, Palm Beach"
+  },
+  {
+    "id": 140,
+    "compactName": "B7-PS-A-T2",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33076, 33428, 33431, 33432, 33433, 33486, 33487, 33496, 33498, 33426",
+    "leadType": "BUYER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boca Raton, Boynton Beach, Coconut Creek",
+    "counties": "Broward, Palm Beach"
+  },
+  {
+    "id": 141,
+    "compactName": "B7-PS-A-T3",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33076, 33428, 33431, 33432, 33433, 33486, 33487, 33496, 33498, 33426",
+    "leadType": "BUYER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boca Raton, Boynton Beach, Coconut Creek",
+    "counties": "Broward, Palm Beach"
+  },
+  {
+    "id": 142,
+    "compactName": "B7-PS-B-T1",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33435, 33472, 33473, 33444, 33445, 33483",
+    "leadType": "BUYER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boynton Beach, Delray Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 143,
+    "compactName": "B7-PS-B-T2",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33435, 33472, 33473, 33444, 33445, 33483",
+    "leadType": "BUYER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boynton Beach, Delray Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 144,
+    "compactName": "B7-PS-B-T3",
+    "fullZoneName": "Zone 7 - PBC-SOUTH",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33435, 33472, 33473, 33444, 33445, 33483",
+    "leadType": "BUYER",
+    "zoneNumber": "7",
+    "zoneName": "PBC-SOUTH",
+    "zoneCode": "PS",
+    "cities": "Boynton Beach, Delray Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 145,
+    "compactName": "B8-PC-A-T1",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33455, 34957, 33458, 33469, 33477, 33449, 33460, 33461, 33462, 33463",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Boynton Beach, Hobe Sound, Jensen Beach, Jupiter, Lake Worth",
+    "counties": "Martin, Palm Beach"
+  },
+  {
+    "id": 146,
+    "compactName": "B8-PC-A-T2",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33455, 34957, 33458, 33469, 33477, 33449, 33460, 33461, 33462, 33463",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Boynton Beach, Hobe Sound, Jensen Beach, Jupiter, Lake Worth",
+    "counties": "Martin, Palm Beach"
+  },
+  {
+    "id": 147,
+    "compactName": "B8-PC-A-T3",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33455, 34957, 33458, 33469, 33477, 33449, 33460, 33461, 33462, 33463",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Boynton Beach, Hobe Sound, Jensen Beach, Jupiter, Lake Worth",
+    "counties": "Martin, Palm Beach"
+  },
+  {
+    "id": 148,
+    "compactName": "B8-PC-B-T1",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33467, 33408, 33403, 33410, 33418, 33480, 33404, 33414, 33401, 33405",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Lake Worth, Palm Beach, Unknown, Wellington, West Palm Beach",
+    "counties": "Palm Beach, Unknown"
+  },
+  {
+    "id": 149,
+    "compactName": "B8-PC-B-T2",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33467, 33408, 33403, 33410, 33418, 33480, 33404, 33414, 33401, 33405",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Lake Worth, Palm Beach, Unknown, Wellington, West Palm Beach",
+    "counties": "Palm Beach, Unknown"
+  },
+  {
+    "id": 150,
+    "compactName": "B8-PC-B-T3",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33467, 33408, 33403, 33410, 33418, 33480, 33404, 33414, 33401, 33405",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "Lake Worth, Palm Beach, Unknown, Wellington, West Palm Beach",
+    "counties": "Palm Beach, Unknown"
+  },
+  {
+    "id": 151,
+    "compactName": "B8-PC-C-T1",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "C",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "33406, 33409, 33411, 33412, 33415, 33417",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "West Palm Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 152,
+    "compactName": "B8-PC-C-T2",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "C",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "33406, 33409, 33411, 33412, 33415, 33417",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "West Palm Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 153,
+    "compactName": "B8-PC-C-T3",
+    "fullZoneName": "Zone 8 - PBC-CENTRAL",
+    "subZone": "C",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "33406, 33409, 33411, 33412, 33415, 33417",
+    "leadType": "BUYER",
+    "zoneNumber": "8",
+    "zoneName": "PBC-CENTRAL",
+    "zoneCode": "PC",
+    "cities": "West Palm Beach",
+    "counties": "Palm Beach"
+  },
+  {
+    "id": 154,
+    "compactName": "B9-TR-A-T1",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "A",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34945, 34946, 34947, 34950, 34951, 34981, 34982, 34956, 34952, 34983",
+    "leadType": "BUYER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie",
+    "counties": "St. Lucie"
+  },
+  {
+    "id": 155,
+    "compactName": "B9-TR-A-T2",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "A",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34945, 34946, 34947, 34950, 34951, 34981, 34982, 34956, 34952, 34983",
+    "leadType": "BUYER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie",
+    "counties": "St. Lucie"
+  },
+  {
+    "id": 156,
+    "compactName": "B9-TR-A-T3",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "A",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34945, 34946, 34947, 34950, 34951, 34981, 34982, 34956, 34952, 34983",
+    "leadType": "BUYER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie",
+    "counties": "St. Lucie"
+  },
+  {
+    "id": 157,
+    "compactName": "B9-TR-B-T1",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "B",
+    "tier": "T1",
+    "priceRange": "$0-$400K",
+    "agentLevel": "New/Proving (0-6mo, <5 deals)",
+    "zipCodes": "34984, 34986, 34987, 34949, 34994, 34995, 34996",
+    "leadType": "BUYER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie, Stuart",
+    "counties": "Martin, St. Lucie"
+  },
+  {
+    "id": 158,
+    "compactName": "B9-TR-B-T2",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "B",
+    "tier": "T2",
+    "priceRange": "$400K-$1M",
+    "agentLevel": "Proven (6-18mo, 5-15 deals)",
+    "zipCodes": "34984, 34986, 34987, 34949, 34994, 34995, 34996",
+    "leadType": "BUYER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie, Stuart",
+    "counties": "Martin, St. Lucie"
+  },
+  {
+    "id": 159,
+    "compactName": "B9-TR-B-T3",
+    "fullZoneName": "Zone 9 - TREASURE",
+    "subZone": "B",
+    "tier": "T3",
+    "priceRange": "$400K-$5M",
+    "agentLevel": "Senior (18+mo, 15+ deals)",
+    "zipCodes": "34984, 34986, 34987, 34949, 34994, 34995, 34996",
+    "leadType": "BUYER",
+    "zoneNumber": "9",
+    "zoneName": "TREASURE",
+    "zoneCode": "TR",
+    "cities": "Fort Pierce, Port St. Lucie, Stuart",
+    "counties": "Martin, St. Lucie"
+  }
+];
+
+        let currentIndex = 0;
+        let filteredGroups = [...allGroups];
+        let completed = JSON.parse(localStorage.getItem('zillowCompletedCompact') || '[]');
+        
+        document.getElementById('leadTypeFilter').addEventListener('change', applyFilters);
+        document.getElementById('tierFilter').addEventListener('change', applyFilters);
+        document.getElementById('showCompleted').addEventListener('change', applyFilters);
+        
+        function applyFilters() {
+            const leadType = document.getElementById('leadTypeFilter').value;
+            const tier = document.getElementById('tierFilter').value;
+            const showCompleted = document.getElementById('showCompleted').value;
+            
+            filteredGroups = allGroups.filter(group => {
+                const leadMatch = leadType === 'ALL' || group.leadType === leadType;
+                const tierMatch = tier === 'ALL' || group.tier === tier;
+                const completedMatch = showCompleted === 'all' || 
+                                     (showCompleted === 'completed' && completed.includes(group.id)) ||
+                                     (showCompleted === 'pending' && !completed.includes(group.id));
+                return leadMatch && tierMatch && completedMatch;
+            });
+            
+            currentIndex = 0;
+            renderGroup();
+        }
+        
+        function renderGroup() {
+            const container = document.getElementById('groupCard');
+            
+            if (filteredGroups.length === 0) {
+                container.innerHTML = '<div class="completion-message"><h2>✅ No groups match your filters</h2><p>Adjust your filters to see more groups</p></div>';
+                return;
+            }
+            
+            if (currentIndex >= filteredGroups.length) {
+                const totalCompleted = completed.length;
+                container.innerHTML = `
+                    <div class="completion-message">
+                        <h2>🎉 All Done!</h2>
+                        <p>You've completed ${totalCompleted} of 159 total groups</p>
+                        <button class="btn-reset" onclick="resetProgress()">Reset Progress</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const group = filteredGroups[currentIndex];
+            const headerClass = group.leadType === 'SELLER' ? 'seller' : 'buyer';
+            
+            container.innerHTML = `
+                <div class="group-header ${headerClass}">
+                    <div class="group-title">${group.compactName}</div>
+                    <div class="group-meta">
+                        <div class="meta-item">📊 ${group.priceRange}</div>
+                        <div class="meta-item">📍 ${group.fullZoneName}</div>
+                        <div class="meta-item">🏘️ ${group.cities}</div>
+                    </div>
+                </div>
+                
+                <div class="copy-section">
+                    <label class="copy-label">Compact ZIP Group Name (${group.compactName.length} chars):</label>
+                    <div class="copy-box">
+                        <input type="text" class="copy-input" id="groupName" value="${group.compactName}" readonly>
+                        <button class="copy-btn" onclick="copyText('groupName', this)">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="copy-section">
+                    <label class="copy-label">ZIP Codes (comma-separated):</label>
+                    <div class="copy-box">
+                        <textarea class="copy-input" id="zipCodes" rows="3" readonly>${group.zipCodes}</textarea>
+                        <button class="copy-btn" onclick="copyText('zipCodes', this)">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-complete" onclick="markComplete()">✓ Mark Complete</button>
+                    <button class="btn btn-skip" onclick="skip()">Skip</button>
+                    <button class="btn btn-next" onclick="nextGroup()">Next →</button>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+        
+        function copyText(elementId, button) {
+            const element = document.getElementById(elementId);
+            element.select();
+            document.execCommand('copy');
+            
+            button.textContent = '✓ Copied!';
+            button.classList.add('copied');
+            
+            setTimeout(() => {
+                button.textContent = 'Copy';
+                button.classList.remove('copied');
+            }, 2000);
+        }
+        
+        function markComplete() {
+            const group = filteredGroups[currentIndex];
+            if (!completed.includes(group.id)) {
+                completed.push(group.id);
+                localStorage.setItem('zillowCompletedCompact', JSON.stringify(completed));
+            }
+            nextGroup();
+        }
+        
+        function skip() {
+            nextGroup();
+        }
+        
+        function nextGroup() {
+            currentIndex++;
+            renderGroup();
+        }
+        
+        function updateProgress() {
+            const percent = Math.round((completed.length / 159) * 100);
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = percent + '%';
+            progressPercent.textContent = percent + '%';
+            progressText.textContent = `${completed.length} of 159 groups completed`;
+        }
+        
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                completed = [];
+                localStorage.setItem('zillowCompletedCompact', JSON.stringify(completed));
+                currentIndex = 0;
+                applyFilters();
+            }
+        }
+        
+        renderGroup();
+    </script>
+</body>
+</html>
